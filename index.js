@@ -1,38 +1,43 @@
+// index.js
 const express = require("express");
 const mongoose = require("mongoose");
-// const Product = require("./models/product.model.js");
-const productRoute = require("./routes/product.route.js");
+const productRoute = require("./routes/product.route.js"); // make sure folder is lowercase 'routes'
+
 const app = express();
-
 const port = process.env.PORT || 3000;
-console.log('hi');
 
-
-// middleware
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+console.log(">>> Running INDEX.JS from:", __filename);
 console.log("Router loading...");
 
-// routes
+// Routes
 app.use("/api/products", productRoute);
 
-
-
-
+// Root route
 app.get("/", (req, res) => {
     res.send("Hello from Node API Server Updated");
 });
 
+// MongoDB Atlas connection
+const username = "sankeerth07";
+const password = "password_123";
+const cluster = "backend.ennaeof.mongodb.net";
+const dbName = "crudAppDB";
 
-mongoose.connect('mongodb://atlas-sql-68fe14bb728ae659d37dfb2d-11ibv4.a.query.mongodb.net/myVirtualDatabase?ssl=true&authSource=admin')
+const mongoURI = `mongodb+srv://${username}:${password}@${cluster}/${dbName}`;
+
+mongoose.connect(mongoURI)
     .then(() => {
         console.log('✅ MongoDB connected successfully');
 
+        // Start Express server after DB connection
         app.listen(port, () => {
-            console.log('Server Running on port ' + port);
+            console.log(`🚀 Server Running on http://localhost:${port}`);
         });
     })
     .catch(err => {
-        console.error('❌ Connection error:', err);
+        console.error('❌ MongoDB connection error:', err.message);
     });
